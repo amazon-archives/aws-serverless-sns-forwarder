@@ -18,7 +18,7 @@ def publish_event_data(event):
         sns.publish_message(string)
 
 
-def handler(event, context):
+def forward_sns(event, context):
     """Lambda function handler."""
     LOG.info('Received event: %s', event)
     publish_event_data(event)

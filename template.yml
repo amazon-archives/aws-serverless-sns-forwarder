@@ -24,24 +24,10 @@ Parameters:
     Type: String
     Description: Log level for Lambda function logging, e.g., ERROR, INFO, DEBUG, etc
     Default: INFO
-  SnsTopicArn:
-    Type: String
-    Description: Sns Topic Arn
-    Default: default
   SnsTopicName:
     Type: String
     Description: Sns Topic Name
     Default: default
-
-Conditions:
-  # Allow users to use an SNS Topic Arn or Name
-  UseTopicName:
-    Fn::Equals:
-      - !Ref SnsTopicArn
-      - default
-  UseTopicArn:
-    Fn::Not:
-      - Condition: UseTopicName
 
 Globals:
   Function:
@@ -57,12 +43,11 @@ Globals:
           - Arn
 
 Resources:
-  SnsForwarderFunctionByName:
+  SnsForwarderFunction:
     Type: AWS::Serverless::Function
-    Condition: UseTopicName
     Properties:
       CodeUri: src/
-      Handler: myfunction.handler
+      Handler: handlers.forward_sns
       Environment:
         Variables:
           LOG_LEVEL: !Ref LogLevel
@@ -72,42 +57,16 @@ Resources:
           SNSPublishMessagePolicy:
             TopicName: !Ref SnsTopicName
 
-  SnsForwarderFunctionByArn:
-    Type: AWS::Serverless::Function
-    Condition: UseTopicArn
-    Properties:
-      CodeUri: src/
-      Handler: myfunction.handler
-      Environment:
-        Variables:
-          LOG_LEVEL: !Ref LogLevel
-          TOPIC_ARN: !Ref SnsTopicArn
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Action:
-                - 'sns:Publish'
-              Effect: Allow
-              Resource: !Ref SnsTopicArn
-
   SnsForwarderFunctionDLQ:
     Type: AWS::SQS::Queue
 
 Outputs:
   SnsForwarderFunctionName:
     Description: "Sns Forwarder Lambda Function Name"
-    Value:
-      Fn::If:
-        - UseTopicName
-        - !Ref SnsForwarderFunctionByName
-        - !Ref SnsForwarderFunctionByArn
+    Value: !Ref SnsForwarderFunction
   SnsForwarderFunctionArn:
     Description: "Sns Forwarder Lambda Function ARN"
-    Value: 
-      Fn::If:
-        - UseTopicName
-        - !GetAtt SnsForwarderFunctionByName.Arn
-        - !GetAtt SnsForwarderFunctionByArn.Arn
+    Value: !GetAtt SnsForwarderFunction.Arn
   SnsForwarderFunctionDLQArn:
     Description: "DLQ ARN"
     Value: !GetAtt SnsForwarderFunctionDLQ.Arn
