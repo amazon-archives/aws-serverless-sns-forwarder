@@ -24,6 +24,8 @@ PYTHON := $(shell /usr/bin/which python$(PY_VERSION))
 
 .DEFAULT_GOAL := build
 
+.PHONY: test clean undeploy deploy package compile build publish bootstrap init
+
 clean:
 	rm -f $(SRC_DIR)/requirements.txt
 	rm -rf $(SAM_DIR)
@@ -39,11 +41,13 @@ init:
 	$(PYTHON) -m $(PIP) install pipenv --user
 	pipenv sync --dev
 
-compile:
+test:
 	pipenv run flake8 $(SRC_DIR)
 	pipenv run pydocstyle $(SRC_DIR)
-	pipenv run cfn-lint template.yml
-	pipenv run py.test --cov=$(SRC_DIR) --cov-fail-under=85 -vv test/unit
+	#pipenv run cfn-lint template.yml
+	pipenv run py.test --cov=$(SRC_DIR) --cov-fail-under=90 -vv test/unit
+
+compile: test
 	pipenv lock --requirements > $(SRC_DIR)/requirements.txt
 	pipenv run sam build
 
