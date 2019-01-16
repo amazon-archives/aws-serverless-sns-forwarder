@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: aws-serverless-sns-forwarder
+    Description: This is a serverless app that receives a JSON array of strings and forwards them to a SNS topic.
+    Author: AWS
+    # SPDX License Id, e.g., MIT, MIT-0, Apache-2.0. See https://spdx.org/licenses for more details
+    SpdxLicenseId: MIT
+    # paths are relative to .aws-sam/build directory
+    LicenseUrl: ../../LICENSE
+    ReadmeUrl: ../../README.md
+    Labels: [serverless,sns]
+    HomePageUrl: https://github.com/awslabs/aws-serverless-sns-forwarder
+    # Update the semantic version and run sam publish to publish a new version of your app
+    SemanticVersion: 0.0.1
+    # best practice is to use git tags for each release and link to the version tag as your source code URL
+    SourceCodeUrl: https://github.com/awslabs/aws-serverless-sns-forwarder/tree/0.0.1
+
+Parameters:
+  LogLevel:
+    Type: String
+    Description: Log level for Lambda function logging, e.g., ERROR, INFO, DEBUG, etc
+    Default: INFO
+  SnsTopic:
+    Type: String
+    Description: Sns Topic name to publish to
+
+Resources:
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: myfunction.handler
+      Runtime: python3.7
+      Tracing: Active
+      Timeout: 60
+      Environment:
+        Variables:
+          LOG_LEVEL: !Ref LogLevel
+          TOPIC_NAME: !Ref SnsTopic
+
+Outputs:
+  MyFunctionName:
+    Description: "Lambda Function Name"
+    Value: !Ref MyFunction
+  MyFunctionArn:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt MyFunction.Arn
