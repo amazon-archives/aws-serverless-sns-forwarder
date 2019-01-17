@@ -27,7 +27,6 @@ Parameters:
   SnsTopicName:
     Type: String
     Description: Sns Topic Name
-    Default: default
 
 Globals:
   Function:
