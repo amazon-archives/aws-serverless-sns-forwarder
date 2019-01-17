@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+Description: A lambda function that forwards messages to an SNS topic
 
 Metadata:
   AWS::ServerlessRepo::Application:
@@ -23,28 +24,48 @@ Parameters:
     Type: String
     Description: Log level for Lambda function logging, e.g., ERROR, INFO, DEBUG, etc
     Default: INFO
-  SnsTopic:
+  SnsTopicName:
     Type: String
-    Description: Sns Topic name to publish to
+    Description: Sns Topic Name
+
+Globals:
+  Function:
+    Runtime: python3.7
+    Tracing: Active
+    Timeout: 60
+    MemorySize: 256
+    DeadLetterQueue:
+      Type: SQS
+      TargetArn:
+        Fn::GetAtt:
+          - SnsForwarderFunctionDLQ
+          - Arn
 
 Resources:
-  MyFunction:
+  SnsForwarderFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: myfunction.handler
-      Runtime: python3.7
-      Tracing: Active
-      Timeout: 60
+      Handler: handlers.forward_sns
       Environment:
         Variables:
           LOG_LEVEL: !Ref LogLevel
-          TOPIC_NAME: !Ref SnsTopic
+          TOPIC_ARN: !Sub arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:${SnsTopicName}
+      Policies:
+        -
+          SNSPublishMessagePolicy:
+            TopicName: !Ref SnsTopicName
+
+  SnsForwarderFunctionDLQ:
+    Type: AWS::SQS::Queue
 
 Outputs:
-  MyFunctionName:
-    Description: "Lambda Function Name"
-    Value: !Ref MyFunction
-  MyFunctionArn:
-    Description: "Lambda Function ARN"
-    Value: !GetAtt MyFunction.Arn
+  SnsForwarderFunctionName:
+    Description: "Sns Forwarder Lambda Function Name"
+    Value: !Ref SnsForwarderFunction
+  SnsForwarderFunctionArn:
+    Description: "Sns Forwarder Lambda Function ARN"
+    Value: !GetAtt SnsForwarderFunction.Arn
+  SnsForwarderFunctionDLQArn:
+    Description: "DLQ ARN"
+    Value: !GetAtt SnsForwarderFunctionDLQ.Arn
