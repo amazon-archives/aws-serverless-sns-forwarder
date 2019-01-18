@@ -9,7 +9,7 @@ This is a serverless app that receives a JSON array of strings and forwards them
 ## Installation Instructions
 
 1. [Create an AWS account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html) if you do not already have one and login
-1. Go to the app's page on the [Serverless Application Repository](TODO) and click "Deploy"
+1. Go to the app's page on the [Serverless Application Repository](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:077246666028:applications~aws-serverless-sns-forwarder) and click "Deploy"
 1. Provide the required app parameters (see parameter details below) and click "Deploy"
 
 ## App Parameters
