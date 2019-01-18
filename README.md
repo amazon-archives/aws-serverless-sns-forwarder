@@ -14,7 +14,7 @@ This is a serverless app that receives a JSON array of strings and forwards them
 
 ## App Parameters
 
-1. `SnsTopicName` (required) - Name of SNS topic to publish messages to
+1. `SnsTopicName` (required) - Name of SNS topic to publish messages to. This topic needs to be in the same account and same region as this application.
 1. `LogLevel` (optional) - Log level for Lambda function logging, e.g., ERROR, INFO, DEBUG, etc. Default: INFO
 
 ## App Outputs
