@@ -12,7 +12,7 @@ Metadata:
     # paths are relative to .aws-sam/build directory
     LicenseUrl: ../../LICENSE
     ReadmeUrl: ../../README.md
-    Labels: [serverless,sns]
+    Labels: [serverless,sns,lambda]
     HomePageUrl: https://github.com/awslabs/aws-serverless-sns-forwarder
     # Update the semantic version and run sam publish to publish a new version of your app
     SemanticVersion: 0.0.1

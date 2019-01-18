@@ -1,10 +1,10 @@
 ## AWS Serverless Sns Forwarder
 
-This is a serverless app that receives a JSON array of strings and forwards them to a SNS topic.
+This is a serverless app that receives a JSON array of strings and forwards them to an SNS topic.
 
 ## App Architecture
 
-TODO: arch diagram
+![App Architecture](https://github.com/awslabs/aws-serverless-sns-forwarder/raw/master/images/sns-forwarder.png)
 
 ## Installation Instructions
 
@@ -14,13 +14,14 @@ TODO: arch diagram
 
 ## App Parameters
 
+1. `SnsTopicName` (required) - Name of SNS topic to publish messages to
 1. `LogLevel` (optional) - Log level for Lambda function logging, e.g., ERROR, INFO, DEBUG, etc. Default: INFO
-1. ...
 
 ## App Outputs
 
-1. `MyFunctionName` - My Lambda function name.
-1. ...
+1. `SnsForwarderFunctionName` - Name of the lambda function
+1. `SnsForwarderFunctionArn` - Arn of the lambda function
+1. `SnsForwarderFunctionDLQArn` - Arn of the lambda function's DLQ
 
 ## License Summary
 

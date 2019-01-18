@@ -19,6 +19,7 @@ PIP ?= pip
 AWS_DEFAULT_REGION ?= us-east-1
 
 STACK_NAME ?= aws-serverless-sns-forwarder
+SNS_TOPIC ?= default
 
 PYTHON := $(shell /usr/bin/which python$(PY_VERSION))
 
@@ -57,7 +58,7 @@ package: compile
 	pipenv run sam package --s3-bucket $(PACKAGE_BUCKET) --output-template-file $(SAM_DIR)/packaged-template.yml
 
 deploy: package
-	pipenv run sam deploy --template-file $(SAM_DIR)/packaged-template.yml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM
+	pipenv run sam deploy --template-file $(SAM_DIR)/packaged-template.yml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM --parameter-overrides SnsTopicName=${SNS_TOPIC}
 
 # used to delete the cfn stack
 undeploy:
